@@ -9,6 +9,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 
 if TYPE_CHECKING:
+    from app.models.job import Job
     from app.models.resume import Resume
 
 
@@ -59,6 +60,12 @@ class User(Base):
     )
 
     resumes: Mapped[list[Resume]] = relationship(
+        back_populates="user",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
+    )
+
+    jobs: Mapped[list[Job]] = relationship(
         back_populates="user",
         cascade="all, delete-orphan",
         passive_deletes=True,

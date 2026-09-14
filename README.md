@@ -26,6 +26,11 @@ foundation, MySQL integration, and JWT-based user authentication.
 - Resume deletion from database and file storage
 - User ownership protection
 - 16 automated tests
+- Authenticated job-description management
+- Create, list, view, update and delete job records
+- Partial job updates with Pydantic validation
+- User ownership protection for every job
+- 25 passing automated tests
 ## Project structure
 
 ```text
@@ -177,6 +182,25 @@ Supported formats:
 Maximum file size: `5 MB`
 
 Uploaded files are validated, renamed with a UUID, stored securely and parsed to extract text.
+## Job endpoints
+
+All job endpoints require JWT authentication.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| POST | `/api/v1/jobs` | Save a job description |
+| GET | `/api/v1/jobs` | List the authenticated user's jobs |
+| GET | `/api/v1/jobs/{job_id}` | View one owned job |
+| PATCH | `/api/v1/jobs/{job_id}` | Partially update an owned job |
+| DELETE | `/api/v1/jobs/{job_id}` | Delete an owned job |
+
+Each job stores:
+
+- Company name
+- Job title
+- Job description
+- Location
+- Job URL
 ## 5. Run tests
 
 ```powershell
@@ -188,10 +212,10 @@ endpoint is checked manually against your own MySQL installation.
 
 ## Next checkpoint
 
-The next feature is job-description management:
+The next feature is resume-to-job matching:
 
-1. Create the jobs database model.
-2. Save company and role details.
-3. Store job-description text.
-4. List, view, update and delete jobs.
-5. Protect every job using user ownership checks.
+1. Extract normalized skills from resume text.
+2. Extract required skills from job descriptions.
+3. Calculate a match score.
+4. Return matched and missing skills.
+5. Ensure users can only match their own resumes and jobs.
