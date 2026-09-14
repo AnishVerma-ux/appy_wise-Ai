@@ -8,6 +8,7 @@ from app.api.routes import (
     jobs,
     matching,
     resumes,
+    suggestions,
 )
 
 
@@ -19,4 +20,5 @@ api_router.include_router(jobs.router)
 api_router.include_router(matching.router)
 api_router.include_router(applications.router)
 api_router.include_router(analytics.router)
+api_router.include_router(suggestions.router)
 api_router.include_router(health.router)

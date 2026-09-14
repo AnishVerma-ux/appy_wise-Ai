@@ -1,6 +1,7 @@
 from functools import lru_cache
 from pathlib import Path
 
+from pydantic import SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from sqlalchemy import URL
 
@@ -16,12 +17,17 @@ class Settings(BaseSettings):
     db_password: str = ""
     db_name: str = "applywise_ai"
 
-    jwt_secret_key: str = "development-secret-change-before-production"
+    jwt_secret_key: str = (
+        "development-secret-change-before-production"
+    )
     jwt_algorithm: str = "HS256"
     access_token_expire_minutes: int = 30
 
     resume_upload_dir: Path = Path("uploads/resumes")
     max_resume_size_bytes: int = 5 * 1024 * 1024
+
+    gemini_api_key: SecretStr | None = None
+    gemini_model: str = "gemini-3.8-flash"
 
     model_config = SettingsConfigDict(
         env_file=".env",
