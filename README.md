@@ -31,6 +31,13 @@ foundation, MySQL integration, and JWT-based user authentication.
 - Partial job updates with Pydantic validation
 - User ownership protection for every job
 - 25 passing automated tests
+- Resume and job-description skill extraction
+- Skill alias and normalization support
+- Implied-skill detection
+- Resume-to-job match score
+- Matched, missing and additional skill results
+- Ownership-protected matching endpoint
+- 39 passing automated tests
 ## Project structure
 
 ```text
@@ -201,6 +208,12 @@ Each job stores:
 - Job description
 - Location
 - Job URL
+
+
+Analyze an authenticated user's resume against one of their saved jobs:
+
+```http
+POST /api/v1/matching/analyze
 ## 5. Run tests
 
 ```powershell
@@ -210,12 +223,16 @@ python -m pytest
 The tests use a temporary SQLite database and do not require a running MySQL server. The database health
 endpoint is checked manually against your own MySQL installation.
 
+
+Replace `## Next checkpoint` with:
+
+```markdown
 ## Next checkpoint
 
-The next feature is resume-to-job matching:
+The next feature is application tracking:
 
-1. Extract normalized skills from resume text.
-2. Extract required skills from job descriptions.
-3. Calculate a match score.
-4. Return matched and missing skills.
-5. Ensure users can only match their own resumes and jobs.
+1. Link a resume with a saved job.
+2. Store the match-score snapshot.
+3. Track Saved, Applied, Interview, Offer and Rejected statuses.
+4. Record application dates and notes.
+5. Maintain status-change history.
