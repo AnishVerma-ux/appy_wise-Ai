@@ -1,4 +1,5 @@
 from collections.abc import Generator
+from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
@@ -7,6 +8,7 @@ from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
 from app import models  # noqa: F401
+from app.core.config import settings
 from app.db.base import Base
 from app.db.session import get_db
 from app.main import app
@@ -17,6 +19,7 @@ testing_engine = create_engine(
     connect_args={"check_same_thread": False},
     poolclass=StaticPool,
 )
+
 TestingSessionLocal = sessionmaker(
     bind=testing_engine,
     autoflush=False,
@@ -27,6 +30,7 @@ TestingSessionLocal = sessionmaker(
 
 def override_get_db() -> Generator[Session, None, None]:
     db = TestingSessionLocal()
+
     try:
         yield db
     finally:
@@ -34,13 +38,22 @@ def override_get_db() -> Generator[Session, None, None]:
 
 
 @pytest.fixture
-def client() -> Generator[TestClient, None, None]:
+def client(
+    tmp_path: Path,
+) -> Generator[TestClient, None, None]:
+    original_upload_directory = settings.resume_upload_dir
+
+    settings.resume_upload_dir = tmp_path / "resumes"
+
     Base.metadata.drop_all(bind=testing_engine)
     Base.metadata.create_all(bind=testing_engine)
+
     app.dependency_overrides[get_db] = override_get_db
 
-    with TestClient(app) as test_client:
-        yield test_client
-
-    app.dependency_overrides.clear()
-
+    try:
+        with TestClient(app) as test_client:
+            yield test_client
+    finally:
+        app.dependency_overrides.clear()
+        settings.resume_upload_dir = original_upload_directory
+        Base.metadata.drop_all(bind=testing_engine)

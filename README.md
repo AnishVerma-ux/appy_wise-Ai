@@ -18,7 +18,14 @@ foundation, MySQL integration, and JWT-based user authentication.
 - Alembic database migrations
 - Swagger/OpenAPI documentation
 - Automated health and authentication tests
-
+- Secure PDF and DOCX resume uploads
+- Maximum 5 MB file-size validation
+- PDF and DOCX content-signature validation
+- Resume text extraction
+- Authenticated resume listing and retrieval
+- Resume deletion from database and file storage
+- User ownership protection
+- 16 automated tests
 ## Project structure
 
 ```text
@@ -151,7 +158,25 @@ Authorization: Bearer <access_token>
 
 This route returns the authenticated user and rejects missing, invalid, or
 expired access tokens.
+## Resume endpoints
 
+All resume endpoints require a JWT access token.
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| POST | `/api/v1/resumes` | Upload and process a resume |
+| GET | `/api/v1/resumes` | List the authenticated user's resumes |
+| GET | `/api/v1/resumes/{resume_id}` | Get one owned resume |
+| DELETE | `/api/v1/resumes/{resume_id}` | Delete an owned resume |
+
+Supported formats:
+
+- PDF
+- DOCX
+
+Maximum file size: `5 MB`
+
+Uploaded files are validated, renamed with a UUID, stored securely and parsed to extract text.
 ## 5. Run tests
 
 ```powershell
@@ -163,9 +188,10 @@ endpoint is checked manually against your own MySQL installation.
 
 ## Next checkpoint
 
-The next feature is resume management:
+The next feature is job-description management:
 
-1. Upload and validate PDF or DOCX resumes.
-2. Store resume metadata in MySQL.
-3. Extract text safely from uploaded files.
-4. List and delete only the authenticated user's resumes.
+1. Create the jobs database model.
+2. Save company and role details.
+3. Store job-description text.
+4. List, view, update and delete jobs.
+5. Protect every job using user ownership checks.
